@@ -20,10 +20,14 @@ class PumaCloudwatch::Metrics
     end
 
     def call
-      put_metric_data(
-        namespace: @namespace,
-        metric_data: metric_data,
-      )
+      if (metric_data && !metric_data.empty?)
+        put_metric_data(
+          namespace: @namespace,
+          metric_data: metric_data,
+        )
+      elsif ENV['PUMA_CLOUDWATCH_DEBUG']
+        puts "Skipping Send due to no data"
+      end
     end
 
     # Input @metrics example:
