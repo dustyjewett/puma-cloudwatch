@@ -32,9 +32,13 @@ class PumaCloudwatch::Metrics
   private
     def perform
       loop do
-        stats = Fetcher.new(@options).call
-        results = Parser.new(stats).call
-        Sender.new(results).call
+        begin
+          stats = Fetcher.new(@options).call
+          results = Parser.new(stats).call
+          Sender.new(results).call
+        rescue Exception => ex
+          puts "Error Sending Puma Cloudwatch: #{ex.message}"
+        end
         sleep @frequency
       end
     end
